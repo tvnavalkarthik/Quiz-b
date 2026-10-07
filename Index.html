@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ml">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ഭൂമിയുടെ ഘടനയും അന്തരീക്ഷവും — പരീക്ഷ</title>
+<style>
+body{font-family:Arial,"Noto Sans Malayalam",sans-serif;background:#f4f7fb;margin:0;padding:18px;color:#172033}
+.card{max-width:760px;margin:auto;background:white;border-radius:18px;padding:22px;box-shadow:0 4px 18px #0001}
+h1{font-size:24px;margin-top:0}.sub{color:#667085}
+.q{border-top:1px solid #e5e7eb;padding:18px 0}.q:first-of-type{border-top:0}
+button.opt{display:block;width:100%;text-align:left;margin:9px 0;padding:13px 15px;border:1px solid #cfd6e4;border-radius:10px;background:#fff;font-size:16px;cursor:pointer}
+button.opt:hover{background:#f0f5ff}
+button.correct{background:#dcfce7;border-color:#22c55e}.wrong{background:#fee2e2!important;border-color:#ef4444!important}
+button:disabled{cursor:default}
+#submit{width:100%;padding:14px;border:0;border-radius:12px;background:#2563eb;color:#fff;font-size:17px;font-weight:bold;cursor:pointer}
+#result{display:none;margin:18px 0;padding:16px;border-radius:12px;background:#eef4ff;font-size:18px;font-weight:bold}
+small{color:#667085}
+</style>
+</head>
+<body>
+<div class="card">
+<h1>🌍 ഭൂമിയുടെ ഘടനയും അന്തരീക്ഷവും</h1>
+<p class="sub">20 ചോദ്യങ്ങൾ • ഓരോ ചോദ്യത്തിനും ഒരു ഉത്തരം തിരഞ്ഞെടുക്കുക.</p>
+<div id="quiz"></div>
+<button id="submit">പരീക്ഷ പൂർത്തിയാക്കി മാർക്ക് കാണുക</button>
+<div id="result"></div>
+</div>
+<script>
+const qs = [
+["ഭൂമിയുടെ ശരാശരി ആരം ഏകദേശം എത്രയാണ്?",["6371 km","2900 km","5500 km","1000 km"],0],
+["ഭൂമിയുടെ ആന്തരിക ഘടനയെ പ്രധാനമായും എത്ര പാളികളായി പരിഗണിക്കുന്നു?",["2","3","4","5"],1],
+["ഭൂമിയുടെ ഏറ്റവും പുറത്തെ പാളി ഏത്?",["കോർ","മാന്റിൽ","ക്രസ്റ്റ്","അന്തരകോർ"],2],
+["ഭൂമിയുടെ ക്രസ്റ്റ് എന്ന പാളിയുടെ മറ്റൊരു പേര് ഏത്?",["ഭൂവൽക്കം","കാമ്പ്","മധ്യപാളി","അന്തരീക്ഷം"],0],
+["ക്രസ്റ്റിന് താഴെയുള്ള പ്രധാന പാളി ഏത്?",["മാന്റിൽ","അന്തരകോർ","അന്തരീക്ഷം","ജലമണ്ഡലം"],0],
+["മാന്റിലിന്റെ കനം ഏകദേശം എത്രയാണ്?",["2900 km","6371 km","5500 km","100 km"],0],
+["ഭൂമിയുടെ ഏറ്റവും അകത്തുള്ള ഭാഗം ഏത്?",["ക്രസ്റ്റ്","മാന്റിൽ","കോർ","അന്തരീക്ഷം"],2],
+["ഭൂമിയുടെ കോറിന്റെ പ്രധാന ഘടകങ്ങളായി പറയപ്പെടുന്ന ലോഹങ്ങൾ ഏവ?",["ഇരുമ്പും നിക്കലും","സ്വർണ്ണവും വെള്ളിയും","അലുമിനിയവും ചെമ്പും","കാർബണും സിലിക്കണും"],0],
+["ഭൂമിയുടെ കോറിലെ താപനില ഏകദേശം എത്ര വരെ എത്താം?",["5500°C","100°C","500°C","1000°C"],0],
+["കോർ പ്രധാനമായും എത്ര ഭാഗങ്ങളായി തിരിച്ചിരിക്കുന്നു?",["2","3","4","5"],0],
+["കോറിന്റെ പുറംഭാഗം ഏത്?",["അന്തരകോർ","ബാഹ്യകോർ","ക്രസ്റ്റ്","മാന്റിൽ"],1],
+["കോറിന്റെ ഏറ്റവും അകത്തെ ഭാഗം ഏത്?",["ബാഹ്യകോർ","ക്രസ്റ്റ്","അന്തരകോർ","മാന്റിൽ"],2],
+["ഭൂമിയെ ചുറ്റിയുള്ള വാതകാവരണം ഏത്?",["ജലമണ്ഡലം","ശിലാമണ്ഡലം","അന്തരീക്ഷം","ജീവമണ്ഡലം"],2],
+["അന്തരീക്ഷത്തിൽ ഏറ്റവും കൂടുതലുള്ള വാതകം ഏത്?",["ഓക്സിജൻ","നൈട്രജൻ","കാർബൺ ഡൈഓക്സൈഡ്","ഹൈഡ്രജൻ"],1],
+["അന്തരീക്ഷത്തിലെ നൈട്രജന്റെ അളവ് ഏകദേശം എത്ര ശതമാനമാണ്?",["21%","50%","78%","1%"],2],
+["അന്തരീക്ഷത്തിലെ ഓക്സിജന്റെ അളവ് ഏകദേശം എത്ര ശതമാനമാണ്?",["21%","78%","10%","5%"],0],
+["അന്തരീക്ഷത്തിൽ വളരെ ചെറിയ അളവിൽ കാണപ്പെടുന്ന വാതകങ്ങളിൽ ഒന്ന് ഏത്?",["കാർബൺ ഡൈഓക്സൈഡ്","നൈട്രജൻ","ഓക്സിജൻ","ഒന്നുമല്ല"],0],
+["ഭൂമിയുടെ ആന്തരിക ഭാഗങ്ങളെ പഠിക്കാൻ പ്രധാനമായും സഹായിക്കുന്ന ഒരു മാർഗം ഏത്?",["ഭൂകമ്പ തരംഗങ്ങൾ","മഴ അളക്കൽ","കാറ്റിന്റെ വേഗം മാത്രം","കടൽജലം പരിശോധിക്കൽ"],0],
+["ഭൂമിയുടെ ആന്തരിക ഘടനയിൽ ക്രസ്റ്റിന് ശേഷം വരുന്നത് ഏത്?",["മാന്റിൽ","അന്തരീക്ഷം","ബാഹ്യകോർ","അന്തരകോർ"],0],
+["ഭൂമിയുടെ ഉപരിതലത്തെ ചുറ്റിപ്പറ്റിയുള്ള വാതകങ്ങളുടെ പാളിയെ എന്ത് വിളിക്കുന്നു?",["കോർ","മാന്റിൽ","അന്തരീക്ഷം","ക്രസ്റ്റ്"],2]
+];
+
+const quiz=document.getElementById("quiz");
+qs.forEach((q,i)=>{
+  const d=document.createElement("div"); d.className="q";
+  d.innerHTML=`<b>${i+1}. ${q[0]}</b>`;
+  q[1].forEach((o,j)=>{
+    const b=document.createElement("button"); b.className="opt"; b.textContent=o;
+    b.onclick=()=>{ if(d.dataset.done)return; d.querySelectorAll("button").forEach(x=>x.disabled=true);
+      d.dataset.done="1"; b.classList.add(j===q[2]?"correct":"wrong");
+      if(j!==q[2]) d.querySelectorAll("button")[q[2]].classList.add("correct");
+    };
+    d.appendChild(b);
+  });
+  quiz.appendChild(d);
+});
+document.getElementById("submit").onclick=()=>{
+  let answered=0,score=0;
+  document.querySelectorAll(".q").forEach((d,i)=>{
+    if(d.dataset.done){answered++; const buttons=d.querySelectorAll("button"); if(buttons[qs[i][2]].classList.contains("correct"))score++;}
+  });
+  const r=document.getElementById("result"); r.style.display="block";
+  r.innerHTML=`ഫലം: <b>${score} / ${qs.length}</b><br><small>${answered} ചോദ്യങ്ങൾക്ക് ഉത്തരം നൽകി.</small>`;
+  window.scrollTo({top:document.body.scrollHeight,behavior:"smooth"});
+};
+</script>
+</body>
+</html>
